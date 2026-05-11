@@ -1338,4 +1338,60 @@ function renderOil(rec) {
       alts.appendChild(card);
     }
   } else {
-    altsSection.style.display = "n
+    altsSection.style.display = "none";
+  }
+}
+
+/* ---------- Soumission formulaire ---------- */
+$("plateForm").addEventListener("submit", async (e) => {
+  e.preventDefault();
+  hideResults();
+  clearStatus();
+  const raw = $("plate").value;
+  const plate = normalizePlate(raw);
+  if (plate.length < 3) {
+    setStatus("Plaque trop courte. Saisissez votre numéro d'immatriculation.", "error");
+    return;
+  }
+
+  $("submitBtn").disabled = true;
+  setStatus("Recherche du véhicule dans le registre NC…", "loading");
+
+  try {
+    const rec = await fetchVehicleByPlate(plate);
+    if (!rec) {
+      setStatus("Aucun véhicule trouvé pour la plaque <strong>" + plate + "</strong>. Vérifiez la saisie.", "error");
+      return;
+    }
+    const info = extractVehicleInfo(rec);
+    renderVehicle(info);
+
+    setStatus("Analyse des préconisations constructeur…", "loading");
+    let oil;
+    try {
+      oil = await recommendOilAI(info);
+    } catch (apiErr) {
+      console.warn("[reco] API IA indisponible, fallback local :", apiErr);
+      oil = recommendOil(info);
+      oil._meta = { source: "local_fallback", confidence: "medium" };
+    }
+    renderOil(oil);
+    clearStatus();
+    showResults();
+    setTimeout(() => $("results").scrollIntoView({ behavior: "smooth", block: "start" }), 100);
+  } catch (err) {
+    setStatus("Erreur lors de la recherche : " + (err && err.message ? err.message : err), "error");
+  } finally {
+    $("submitBtn").disabled = false;
+  }
+});
+
+/* ---------- UX : majuscules en direct ---------- */
+$("plate").addEventListener("input", (e) => {
+  const pos = e.target.selectionStart;
+  e.target.value = e.target.value.toUpperCase();
+  try { e.target.setSelectionRange(pos, pos); } catch (_) {}
+});
+</script>
+</body>
+</html>
