@@ -1,0 +1,1352 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+<meta name="theme-color" content="#000000" />
+<meta name="apple-mobile-web-app-capable" content="yes" />
+<meta name="apple-mobile-web-app-status-bar-style" content="black" />
+<title>Mobil NC — Quelle huile pour votre véhicule ?</title>
+<meta name="description" content="Entrez votre plaque d'immatriculation calédonienne et découvrez quel lubrifiant Mobil utiliser. Données issues du registre officiel des véhicules immatriculés en NC." />
+<link rel="icon" type="image/png" href="mobil-logo.png"/>
+<style>
+  /* ============================================================
+     CHARTE MOBIL — DESIGN CLEAN FOND BLANC
+     Rouge Mobil : #E31837
+     Noir       : #000000
+     Anthracite : #1A1A1A
+     Gris doux  : #F5F5F7 / #E5E7EB
+     ============================================================ */
+  :root {
+    --mobil-red: #E31837;
+    --mobil-red-dark: #B30E26;
+    --black: #000000;
+    --ink: #1A1A1A;
+    --text: #1A1A1A;
+    --muted: #6B7280;
+    --line: #E5E7EB;
+    --soft: #F5F5F7;
+    --card-bg: #FFFFFF;
+    --shadow-sm: 0 1px 3px rgba(0,0,0,0.06);
+    --shadow: 0 4px 20px rgba(0,0,0,0.08);
+    --shadow-lg: 0 20px 50px rgba(0,0,0,0.12);
+  }
+  * { box-sizing: border-box; }
+  html, body { margin: 0; padding: 0; }
+  body {
+    font-family: "Helvetica Neue", Helvetica, Arial, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+    color: var(--ink);
+    background: #FFFFFF;
+    min-height: 100vh;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+
+  /* ===== Topbar : fond noir + logo image (charte Mobil) ===== */
+  .topbar {
+    background: #000;
+    padding: 14px 16px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: sticky;
+    top: 0;
+    z-index: 50;
+  }
+  .mobil-logo-img {
+    height: 40px;
+    width: auto;
+    display: block;
+    user-select: none;
+  }
+  /* fine ligne rouge sous la topbar (signature visuelle Mobil) */
+  .topbar-accent {
+    height: 3px;
+    background: var(--mobil-red);
+  }
+  @media (min-width: 768px) {
+    .topbar { padding: 18px 24px; }
+    .mobil-logo-img { height: 56px; }
+    .topbar-accent { height: 4px; }
+  }
+
+  /* ===== Hero ===== */
+  .hero {
+    text-align: center;
+    padding: 28px 16px 20px;
+    max-width: 720px;
+    margin: 0 auto;
+  }
+  .hero .eyebrow {
+    display: inline-block;
+    font-size: 10px;
+    font-weight: 700;
+    color: var(--mobil-red);
+    text-transform: uppercase;
+    letter-spacing: 1.8px;
+    margin-bottom: 14px;
+    position: relative;
+    padding-left: 26px;
+  }
+  .hero .eyebrow::before {
+    content: "";
+    position: absolute;
+    left: 0;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 18px;
+    height: 2px;
+    background: var(--mobil-red);
+  }
+  .hero h1 {
+    margin: 0 0 12px;
+    font-size: 28px;
+    letter-spacing: -0.02em;
+    color: var(--black);
+    font-weight: 900;
+    line-height: 1.1;
+  }
+  .hero h1 .accent { color: var(--mobil-red); }
+  .hero p {
+    margin: 0 auto;
+    max-width: 560px;
+    color: var(--muted);
+    font-size: 15px;
+    line-height: 1.5;
+  }
+  @media (min-width: 768px) {
+    .hero { padding: 64px 20px 40px; }
+    .hero .eyebrow { font-size: 11px; letter-spacing: 2.5px; padding-left: 32px; margin-bottom: 18px; }
+    .hero .eyebrow::before { width: 24px; }
+    .hero h1 { font-size: clamp(36px, 5vw, 56px); margin-bottom: 16px; }
+    .hero p { font-size: 17px; line-height: 1.55; }
+  }
+
+  /* ===== Main / Card ===== */
+  main {
+    max-width: 960px;
+    margin: 0 auto;
+    padding: 0 12px 40px;
+  }
+  .card {
+    background: var(--card-bg);
+    border-radius: 14px;
+    box-shadow: var(--shadow);
+    border: 1px solid var(--line);
+    padding: 20px 16px;
+    margin-top: 8px;
+  }
+  @media (min-width: 768px) {
+    main { padding: 0 16px 80px; }
+    .card { padding: 36px; border-radius: 20px; box-shadow: var(--shadow-lg); margin-top: 12px; }
+  }
+
+  /* ===== Form plaque ===== */
+  .form-label {
+    display: block;
+    font-size: 11px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 1.5px;
+    color: var(--muted);
+    margin-bottom: 10px;
+  }
+  .plate-form {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    align-items: stretch;
+  }
+  .plate-input {
+    width: 100%;
+    font-size: 24px;
+    font-weight: 800;
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    padding: 18px 16px;
+    border: 2px solid var(--line);
+    border-radius: 12px;
+    background: var(--soft);
+    color: var(--ink);
+    text-align: center;
+    transition: border-color .15s, box-shadow .15s, background .15s;
+    outline: none;
+    font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+    -webkit-appearance: none;
+    appearance: none;
+  }
+  .plate-input::placeholder { color: #B0B5BE; }
+  .plate-input:focus {
+    border-color: var(--mobil-red);
+    box-shadow: 0 0 0 4px rgba(227, 24, 55, 0.12);
+    background: #fff;
+  }
+  .btn {
+    border: 0;
+    cursor: pointer;
+    width: 100%;
+    padding: 18px 24px;
+    min-height: 56px;
+    border-radius: 12px;
+    font-size: 15px;
+    font-weight: 800;
+    letter-spacing: 1.2px;
+    text-transform: uppercase;
+    background: var(--mobil-red);
+    color: #fff;
+    transition: background .15s, transform .05s, box-shadow .15s;
+    box-shadow: 0 4px 14px rgba(227, 24, 55, 0.3);
+    white-space: nowrap;
+    -webkit-appearance: none;
+    appearance: none;
+  }
+  .btn:hover { background: var(--mobil-red-dark); box-shadow: 0 6px 20px rgba(227, 24, 55, 0.4); }
+  .btn:active { transform: translateY(1px); }
+  .btn[disabled] { opacity: 0.55; cursor: not-allowed; }
+  .hint {
+    margin-top: 10px;
+    font-size: 12px;
+    color: var(--muted);
+    line-height: 1.45;
+  }
+  @media (min-width: 640px) {
+    .plate-form { flex-direction: row; gap: 10px; flex-wrap: wrap; }
+    .plate-input { flex: 1 1 280px; width: auto; font-size: 26px; letter-spacing: 4px; padding: 18px 20px; }
+    .btn { width: auto; padding: 18px 32px; font-size: 14px; }
+    .hint { font-size: 13px; margin-top: 12px; }
+  }
+
+  /* ===== Status messages ===== */
+  .status {
+    margin-top: 20px;
+    padding: 14px 18px;
+    border-radius: 10px;
+    font-size: 14px;
+    display: none;
+    border-left: 4px solid transparent;
+  }
+  .status.show { display: block; }
+  .status.error { background: #FFF1F1; color: #B00020; border-left-color: var(--mobil-red); }
+  .status.info  { background: #F0F6FF; color: #0B3B8C; border-left-color: #0B3B8C; }
+  .status.loading { background: var(--soft); color: var(--ink); border-left-color: var(--mobil-red); }
+
+  /* ===== Results ===== */
+  .results { display: none; margin-top: 28px; }
+  .results.show { display: block; }
+
+  .section-title {
+    margin: 0 0 12px;
+    font-size: 11px;
+    font-weight: 800;
+    text-transform: uppercase;
+    letter-spacing: 1.6px;
+    color: var(--ink);
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+  .section-title::before {
+    content: "";
+    width: 24px;
+    height: 3px;
+    background: var(--mobil-red);
+    border-radius: 2px;
+  }
+  @media (min-width: 768px) {
+    .section-title { margin-bottom: 16px; letter-spacing: 2px; gap: 12px; }
+    .section-title::before { width: 28px; }
+  }
+
+  /* ===== Fiche véhicule (simplifiée) ===== */
+  .vehicle-section { margin-top: 8px; }
+
+  /* Bandeau principal : Marque / Modèle / Plaque */
+  .vehicle-summary {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 1px;
+    background: var(--line);
+    border: 1px solid var(--line);
+    border-radius: 12px;
+    overflow: hidden;
+    margin-bottom: 12px;
+  }
+  @media (min-width: 768px) {
+    .vehicle-summary { grid-template-columns: 1fr 1fr auto; }
+  }
+  .vehicle-summary .kv {
+    background: #fff;
+    padding: 14px 16px;
+  }
+  @media (min-width: 768px) {
+    .vehicle-summary .kv { padding: 18px 20px; }
+  }
+  .vehicle-summary .kv.plate-display {
+    background: var(--black);
+  }
+  .vehicle-summary .kv.plate-display .k { color: rgba(255,255,255,0.6); }
+  .vehicle-summary .kv.plate-display .v {
+    color: #fff;
+    font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+    letter-spacing: 2px;
+    font-size: 20px;
+  }
+  @media (min-width: 768px) {
+    .vehicle-summary .kv.plate-display .v { font-size: 22px; }
+  }
+
+  .grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 1px;
+    background: var(--line);
+    border: 1px solid var(--line);
+    border-radius: 12px;
+    overflow: hidden;
+  }
+  .kv {
+    background: #fff;
+    padding: 14px 16px;
+  }
+  .kv .k {
+    font-size: 10px;
+    color: var(--muted);
+    text-transform: uppercase;
+    letter-spacing: 1.3px;
+    margin-bottom: 4px;
+    font-weight: 700;
+  }
+  .kv .v {
+    font-size: 16px;
+    font-weight: 700;
+    color: var(--ink);
+    word-break: break-word;
+    line-height: 1.3;
+  }
+  .vehicle-summary .kv .v {
+    font-size: 20px;
+  }
+
+  /* Toggle "détails" du véhicule */
+  details.vehicle-details {
+    margin-top: 0;
+    background: var(--soft);
+    border-radius: 12px;
+    padding: 14px 18px;
+  }
+  details.vehicle-details summary {
+    cursor: pointer;
+    font-weight: 700;
+    color: var(--ink);
+    font-size: 13px;
+    list-style: none;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+  }
+  details.vehicle-details summary::-webkit-details-marker { display: none; }
+  details.vehicle-details summary::before {
+    content: "+";
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 20px; height: 20px;
+    background: var(--mobil-red);
+    color: #fff;
+    border-radius: 50%;
+    font-weight: 900;
+    font-size: 14px;
+  }
+  details.vehicle-details[open] summary::before { content: "−"; }
+  details.vehicle-details > .grid { margin-top: 14px; }
+
+  /* ===== Oil card (recommandation principale) ===== */
+  .oil-section { margin-top: 28px; }
+  .oil-card {
+    background: #fff;
+    border: 1px solid var(--line);
+    border-radius: 14px;
+    padding: 20px 16px;
+    position: relative;
+    overflow: hidden;
+  }
+  @media (min-width: 768px) {
+    .oil-section { margin-top: 36px; }
+    .oil-card { border-radius: 16px; padding: 32px; }
+  }
+  .oil-card::before {
+    content: "";
+    position: absolute;
+    left: 0; top: 0; bottom: 0;
+    width: 6px;
+    background: var(--mobil-red);
+  }
+  .oil-card .logo-watermark {
+    position: absolute;
+    right: -20px; bottom: -30px;
+    width: 200px;
+    height: auto;
+    opacity: 0.05;
+    pointer-events: none;
+    user-select: none;
+  }
+
+  /* Layout flex : mobile-first → colonne (visuel en haut), desktop → ligne */
+  .oil-hero {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    gap: 18px;
+    position: relative;
+    margin-bottom: 8px;
+  }
+  @media (min-width: 700px) {
+    .oil-hero { flex-direction: row; align-items: flex-start; text-align: left; gap: 28px; }
+  }
+  .oil-visual {
+    flex: 0 0 auto;
+    width: 200px;
+    max-width: 200px;
+    background: linear-gradient(135deg, #1A1A1A 0%, #2a2a2a 100%);
+    border-radius: 12px;
+    padding: 16px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    min-height: 200px;
+    position: relative;
+    overflow: hidden;
+    box-shadow: var(--shadow);
+  }
+  @media (min-width: 700px) {
+    .oil-visual { flex: 0 0 180px; width: 180px; min-height: 220px; padding: 20px; }
+  }
+  /* Photo officielle Mobil (quand disponible) */
+  .oil-visual img.oil-photo {
+    width: 100%;
+    height: 100%;
+    max-width: 220px;
+    max-height: 220px;
+    object-fit: contain;
+    position: relative;
+    z-index: 1;
+    filter: drop-shadow(0 4px 10px rgba(0,0,0,0.15));
+  }
+  .oil-visual.has-photo {
+    background: #fff;
+    border: 1px solid var(--line);
+    padding: 12px;
+  }
+  .oil-visual.has-photo .oil-visual-label { display: none; }
+  .oil-visual.has-photo::before { display: none; }
+  .oil-visual.has-photo .oil-bottle { display: none; }
+
+  /* Alternatives — photo officielle */
+  .alt-card-visual img.alt-photo {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+    position: relative;
+    z-index: 1;
+    padding: 4px;
+  }
+  .alt-card-visual.has-photo {
+    background: #fff;
+    border: 1px solid var(--line);
+  }
+  .alt-card-visual.has-photo .alt-card-bottle { display: none; }
+  .oil-visual::before {
+    content: "";
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    height: 50%;
+    background: linear-gradient(180deg, rgba(227, 24, 55, 0.15) 0%, transparent 100%);
+    pointer-events: none;
+  }
+  .oil-bottle {
+    width: 70px;
+    height: 130px;
+    background: linear-gradient(180deg, #E31837 0%, #B30E26 100%);
+    border-radius: 12px 12px 8px 8px;
+    position: relative;
+    box-shadow: 0 8px 24px rgba(227, 24, 55, 0.4);
+  }
+  .oil-bottle::before {
+    content: "";
+    position: absolute;
+    top: -14px; left: 50%;
+    transform: translateX(-50%);
+    width: 24px;
+    height: 18px;
+    background: #1A1A1A;
+    border-radius: 4px 4px 0 0;
+  }
+  .oil-bottle::after {
+    content: "Mobil";
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    color: #fff;
+    font-weight: 900;
+    font-size: 11px;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+  }
+  .oil-visual-label {
+    margin-top: 14px;
+    color: rgba(255,255,255,0.9);
+    font-size: 10px;
+    font-weight: 800;
+    text-transform: uppercase;
+    letter-spacing: 1.5px;
+    text-align: center;
+  }
+  .oil-info { flex: 1; min-width: 0; }
+
+  .oil-eyebrow {
+    font-size: 10px;
+    font-weight: 800;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+    color: var(--mobil-red);
+    margin-bottom: 6px;
+  }
+  .oil-product {
+    font-size: 24px;
+    font-weight: 900;
+    color: var(--black);
+    letter-spacing: -0.02em;
+    line-height: 1.1;
+    margin-bottom: 4px;
+    position: relative;
+  }
+  .oil-grade {
+    font-size: 48px;
+    font-weight: 900;
+    color: var(--mobil-red);
+    letter-spacing: -0.03em;
+    line-height: 1;
+    margin: 6px 0 8px;
+    position: relative;
+  }
+  @media (min-width: 768px) {
+    .oil-product { font-size: clamp(28px, 4vw, 38px); }
+    .oil-grade { font-size: clamp(48px, 7vw, 72px); }
+  }
+  .oil-type {
+    display: inline-block;
+    font-size: 11px;
+    font-weight: 800;
+    text-transform: uppercase;
+    letter-spacing: 1.5px;
+    color: #fff;
+    background: var(--black);
+    border-radius: 4px;
+    padding: 6px 12px;
+    margin-top: 4px;
+    position: relative;
+  }
+  .oil-reason {
+    margin-top: 16px;
+    color: var(--ink);
+    font-size: 15px;
+    line-height: 1.55;
+    position: relative;
+    max-width: 640px;
+  }
+
+  /* ===== Bloc "Pourquoi cette huile" — mis en avant ===== */
+  .oil-why {
+    margin-top: 20px;
+    background: linear-gradient(135deg, #FFF8F9 0%, #FFFFFF 100%);
+    border-left: 4px solid var(--mobil-red);
+    border-radius: 10px;
+    padding: 16px 18px;
+    position: relative;
+  }
+  @media (min-width: 768px) {
+    .oil-why { margin-top: 24px; padding: 20px 24px; }
+  }
+  .oil-why-label {
+    font-size: 10px;
+    font-weight: 800;
+    text-transform: uppercase;
+    letter-spacing: 1.8px;
+    color: var(--mobil-red);
+    margin-bottom: 8px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .oil-why-label::before {
+    content: "i";
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 18px; height: 18px;
+    background: var(--mobil-red);
+    color: #fff;
+    border-radius: 50%;
+    font-weight: 900;
+    font-size: 11px;
+    font-style: italic;
+    font-family: Georgia, serif;
+  }
+  .oil-why p {
+    margin: 0;
+    color: var(--ink);
+    font-size: 15px;
+    line-height: 1.6;
+  }
+
+  .oil-meta {
+    margin-top: 20px;
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    gap: 10px;
+    position: relative;
+  }
+  .oil-meta-item {
+    background: var(--soft);
+    border-radius: 10px;
+    padding: 14px 16px;
+  }
+  .oil-meta-item .k {
+    display: block;
+    font-size: 10px;
+    text-transform: uppercase;
+    letter-spacing: 1.3px;
+    color: var(--muted);
+    margin-bottom: 6px;
+    font-weight: 800;
+  }
+  .oil-meta-item .v {
+    display: block;
+    font-size: 14px;
+    color: var(--ink);
+    font-weight: 700;
+    word-break: break-word;
+    line-height: 1.45;
+  }
+
+  /* ===== Alternatives mises en évidence ===== */
+  .alternatives-section {
+    margin-top: 28px;
+    padding-top: 24px;
+    border-top: 2px solid var(--line);
+  }
+  .alternatives-intro {
+    color: var(--muted);
+    font-size: 13px;
+    margin: 4px 0 16px;
+    line-height: 1.5;
+    max-width: 640px;
+  }
+  .alt-grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 12px;
+  }
+  .alt-card {
+    background: #fff;
+    border: 2px solid var(--line);
+    border-radius: 14px;
+    padding: 16px;
+    display: flex;
+    gap: 14px;
+    align-items: center;
+    transition: border-color .15s, transform .15s, box-shadow .15s;
+    position: relative;
+  }
+  .alt-card:hover, .alt-card:active {
+    border-color: var(--mobil-red);
+    box-shadow: var(--shadow);
+  }
+  .alt-card-visual {
+    flex: 0 0 70px;
+    height: 90px;
+    background: linear-gradient(135deg, #1A1A1A 0%, #2a2a2a 100%);
+    border-radius: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+    overflow: hidden;
+  }
+  @media (min-width: 640px) {
+    .alternatives-section { margin-top: 40px; padding-top: 32px; }
+    .alternatives-intro { font-size: 14px; margin-bottom: 20px; line-height: 1.55; }
+    .alt-grid { grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 16px; }
+    .alt-card { padding: 24px; gap: 18px; }
+    .alt-card:hover { transform: translateY(-2px); }
+  }
+  .alt-card-bottle {
+    width: 32px;
+    height: 60px;
+    background: linear-gradient(180deg, #E31837 0%, #B30E26 100%);
+    border-radius: 6px 6px 4px 4px;
+    position: relative;
+    box-shadow: 0 4px 12px rgba(227, 24, 55, 0.4);
+  }
+  .alt-card-bottle::before {
+    content: "";
+    position: absolute;
+    top: -7px; left: 50%;
+    transform: translateX(-50%);
+    width: 12px;
+    height: 9px;
+    background: #1A1A1A;
+    border-radius: 2px 2px 0 0;
+  }
+  .alt-card-info { flex: 1; min-width: 0; }
+  .alt-card-label {
+    font-size: 9px;
+    font-weight: 800;
+    text-transform: uppercase;
+    letter-spacing: 1.3px;
+    color: var(--mobil-red);
+    margin-bottom: 4px;
+  }
+  .alt-card-name {
+    font-size: 17px;
+    font-weight: 800;
+    color: var(--black);
+    line-height: 1.25;
+    letter-spacing: -0.01em;
+  }
+
+  /* ===== Details (pourquoi) ===== */
+  details {
+    margin-top: 18px;
+    background: var(--soft);
+    border-radius: 12px;
+    padding: 14px 18px;
+  }
+  details summary {
+    cursor: pointer;
+    font-weight: 700;
+    color: var(--ink);
+    font-size: 14px;
+    list-style: none;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  details summary::-webkit-details-marker { display: none; }
+  details summary::before {
+    content: "+";
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 20px; height: 20px;
+    background: var(--mobil-red);
+    color: #fff;
+    border-radius: 50%;
+    font-weight: 900;
+    font-size: 14px;
+    transition: transform .15s;
+  }
+  details[open] summary::before {
+    content: "−";
+    transform: rotate(180deg);
+  }
+  details p {
+    margin: 12px 0 0;
+    color: var(--muted);
+    font-size: 14px;
+    line-height: 1.6;
+  }
+
+  .disclaimer {
+    margin-top: 20px;
+    font-size: 12px;
+    color: var(--muted);
+    text-align: center;
+    line-height: 1.5;
+    padding: 12px;
+    border-top: 1px solid var(--line);
+  }
+
+  /* ===== Footer ===== */
+  footer {
+    background: var(--black);
+    color: rgba(255,255,255,0.6);
+    text-align: center;
+    font-size: 11px;
+    padding: 28px 16px 24px;
+    line-height: 1.6;
+    margin-top: 32px;
+  }
+  @media (min-width: 768px) {
+    footer { font-size: 12px; padding: 40px 20px 32px; margin-top: 60px; }
+  }
+  footer .footer-logo {
+    display: inline-block;
+    margin-bottom: 16px;
+  }
+  footer .footer-logo img {
+    height: 32px;
+    width: auto;
+    display: block;
+  }
+  footer .footer-line {
+    width: 40px;
+    height: 3px;
+    background: var(--mobil-red);
+    margin: 0 auto 16px;
+    border-radius: 2px;
+  }
+  footer strong { color: rgba(255,255,255,0.9); }
+
+  /* ===== Spinner ===== */
+  .spinner {
+    display: inline-block;
+    width: 14px; height: 14px;
+    border: 2px solid currentColor;
+    border-right-color: transparent;
+    border-radius: 50%;
+    animation: spin 0.7s linear infinite;
+    vertical-align: middle;
+    margin-right: 8px;
+  }
+  @keyframes spin { to { transform: rotate(360deg); } }
+</style>
+</head>
+<body>
+
+<!-- ===== Topbar Mobil ===== -->
+<div class="topbar">
+  <img src="mobil-logo.png" alt="Logo Mobil" class="mobil-logo-img" />
+</div>
+<div class="topbar-accent"></div>
+
+<!-- ===== Hero ===== -->
+<section class="hero">
+  <span class="eyebrow">Service station Mobil — Nouvelle-Calédonie</span>
+  <h1>Le bon <span class="accent">lubrifiant</span><br/>pour votre véhicule.</h1>
+  <p>Entrez votre plaque d'immatriculation. Nous identifions votre véhicule dans le registre officiel et recommandons le produit Mobil adapté à votre moteur.</p>
+</section>
+
+<main>
+  <section class="card">
+    <label class="form-label" for="plate">Plaque d'immatriculation</label>
+    <form id="plateForm" class="plate-form" autocomplete="off">
+      <input
+        id="plate"
+        class="plate-input"
+        type="text"
+        placeholder="475252NC"
+        maxlength="10"
+        inputmode="latin"
+        spellcheck="false"
+        aria-label="Plaque d'immatriculation"
+      />
+      <button id="submitBtn" class="btn" type="submit">Trouver mon huile</button>
+    </form>
+    <div class="hint">Format calédonien : <strong>XXXXXXNC</strong>. Vous pouvez aussi saisir uniquement les chiffres — le suffixe NC est ajouté automatiquement.</div>
+
+    <div id="status" class="status" role="status" aria-live="polite"></div>
+
+    <div id="results" class="results">
+
+      <div class="vehicle-section">
+        <h3 class="section-title">Votre véhicule</h3>
+        <div id="vehicleSummary" class="vehicle-summary"></div>
+        <details class="vehicle-details">
+          <summary>Voir tous les détails</summary>
+          <div id="vehicleGrid" class="grid"></div>
+        </details>
+      </div>
+
+      <div class="oil-section">
+        <h3 class="section-title">Huile recommandée</h3>
+        <div id="oilCard" class="oil-card">
+          <img src="mobil-logo.png" class="logo-watermark" alt="" aria-hidden="true" />
+          <div class="oil-hero">
+            <div class="oil-visual" id="oilVisual">
+              <!-- Image officielle Mobil (injectée par JS) ou fallback bouteille CSS -->
+              <div class="oil-bottle" aria-hidden="true"></div>
+              <div class="oil-visual-label">Lubrifiant<br/>Mobil</div>
+            </div>
+            <div class="oil-info">
+              <div class="oil-eyebrow">Produit recommandé</div>
+              <div class="oil-product" id="oilProduct">—</div>
+              <div class="oil-grade" id="oilGrade">—</div>
+              <div class="oil-type" id="oilType"></div>
+            </div>
+          </div>
+          <div class="oil-reason" id="oilReason"></div>
+
+          <!-- Bloc "Pourquoi cette huile" mis en avant, directement visible -->
+          <div class="oil-why">
+            <div class="oil-why-label">Pourquoi cette huile&nbsp;?</div>
+            <p id="oilExplain"></p>
+          </div>
+
+          <!-- Intervalle de vidange : info utile rapidement visible -->
+          <div class="oil-meta">
+            <div class="oil-meta-item"><span class="k">Intervalle de vidange</span><span class="v" id="oilVidange">—</span></div>
+          </div>
+        </div>
+
+        <!-- Homologations / normes : secondaires, dans un menu déroulant -->
+        <details>
+          <summary>Normes &amp; homologations techniques</summary>
+          <p id="oilSpecs">—</p>
+        </details>
+      </div>
+
+      <div class="alternatives-section">
+        <h3 class="section-title">Alternatives disponibles</h3>
+        <p class="alternatives-intro">En cas de rupture de stock du produit principal, ces lubrifiants Mobil peuvent être proposés au client.</p>
+        <div id="oilAlts" class="alt-grid"></div>
+      </div>
+
+      <p class="disclaimer">
+        Recommandations issues du catalogue Mobil — Formation Station-Service 2026. Toujours vérifier la préconisation constructeur (manuel d'entretien) avant la vidange.
+      </p>
+
+    </div>
+  </section>
+</main>
+
+<footer>
+  <div class="footer-logo">
+    <img src="mobil-logo.png" alt="Mobil" />
+  </div>
+  <div class="footer-line"></div>
+  <div>
+    Données véhicules&nbsp;: <strong>data.gouv.nc</strong> — dataset <em>vehicules-immatricules-nc</em><br/>
+    Recommandations issues du catalogue Mobil — Formation Station-Service 2026.<br/>
+    Cette recommandation est indicative. Toujours vérifier le manuel d'entretien constructeur.
+  </div>
+</footer>
+
+<script>
+/* ============================================================
+   API: data.gouv.nc — OpenDataSoft v2.1
+   Dataset: vehicules-immatricules-nc
+   ============================================================ */
+const API_BASE = "https://data.gouv.nc/api/explore/v2.1/catalog/datasets/vehicules-immatricules-nc/records";
+
+/* ---------- UI helpers ---------- */
+const $ = (id) => document.getElementById(id);
+
+function setStatus(msg, type = "info") {
+  const el = $("status");
+  el.className = "status show " + type;
+  el.innerHTML = (type === "loading" ? '<span class="spinner"></span>' : "") + msg;
+}
+function clearStatus() {
+  $("status").className = "status";
+  $("status").innerHTML = "";
+}
+function hideResults() { $("results").classList.remove("show"); }
+function showResults() { $("results").classList.add("show"); }
+
+/* ---------- Normalisation plaque ----------
+ * Format réel dans le dataset : "475252NC" (chiffres + suffixe NC, collés)
+ */
+function normalizePlate(raw) {
+  let p = (raw || "").toUpperCase().replace(/[^A-Z0-9]/g, "").trim();
+  if (/^\d{3,7}$/.test(p)) p += "NC";
+  return p;
+}
+
+/* ---------- Récupération API (recherche STRICTE) ---------- */
+async function fetchVehicleByPlate(plate) {
+  const variants = [
+    plate,
+    plate.replace(/NC$/, "") + "NC",
+    plate.replace(/^(\d+)([A-Z]+)$/, "$1 $2"),
+  ];
+  const seen = new Set();
+  for (const v of variants) {
+    if (seen.has(v)) continue;
+    seen.add(v);
+    const url = `${API_BASE}?where=${encodeURIComponent(`numero_immat="${v}"`)}&limit=1`;
+    try {
+      const r = await fetch(url);
+      if (!r.ok) continue;
+      const data = await r.json();
+      if (data.results && data.results.length > 0) return data.results[0];
+    } catch (e) { /* essai suivant */ }
+  }
+  return null;
+}
+
+/* ---------- Décodage des codes courts du dataset ---------- */
+const ENERGIE_LABELS = {
+  "ES": "Essence",
+  "GO": "Diesel (gazole)",
+  "GH": "Gazole hybride",
+  "EH": "Essence hybride non rechargeable",
+  "EE": "Essence hybride rechargeable",
+  "EL": "Électrique",
+  "GA": "Gaz (GPL)",
+  "GN": "Gaz naturel",
+  "EP": "Essence + GPL",
+  "FE": "Superéthanol E85",
+  "H2": "Hydrogène",
+  "NE": "Non énergisé"
+};
+
+const GENRE_LABELS = {
+  "VP": "Voiture particulière",
+  "CTTE": "Camionnette",
+  "CAM": "Camion",
+  "MTL": "Motocyclette légère",
+  "MTT": "Motocyclette",
+  "CL":  "Cyclomoteur",
+  "TRA": "Tracteur",
+  "REA": "Remorque"
+};
+
+function extractVehicleInfo(rec) {
+  const energieCode = rec.energie || null;
+  const dateMec = rec.date_1ere_mise_en_circulation || rec.date_1ere_mise_en_circulation_nc || rec.date_emission || null;
+  const annee = dateMec ? parseInt(String(dateMec).slice(0, 4), 10) : null;
+
+  return {
+    plaque:       rec.numero_immat || null,
+    marque:       rec.marque || null,
+    modele:       rec.appellation_commerciale || null,
+    annee:        annee,
+    dateMec:      dateMec,
+    energie:      energieCode,
+    energieLabel: ENERGIE_LABELS[energieCode] || energieCode,
+    cylindree:    rec.cylindree_cm3 || null,
+    puissanceCV:  rec.puissance_administrative || null,
+    puissanceKW:  rec.puissance_kw || null,
+    genre:        rec.genre || rec.genre_code || null,
+    genreLabel:   rec.genre || (rec.genre_code ? (GENRE_LABELS[rec.genre_code] || rec.genre_code) : null),
+    carrosserie:  rec.carrosserie || null,
+    couleur:      rec.couleur || null,
+    places:       rec.nb_place_assis || null,
+    poidsVide:    rec.poids_vide || null,
+    ptac:         rec.ptac || null,
+    commune:      rec.commune_proprietaire || rec.commune_locataire || null,
+    province:     rec.proprietaire_province || rec.locataire_province || null,
+    raw:          rec
+  };
+}
+
+/* ---------- Mapping produit → photo locale ----------
+ * Les photos sont dans le dossier ./oils/ (fournies par l'utilisateur, 500x500).
+ * Si un fichier manque, l'attribut onerror retombe sur le visuel CSS stylisé.
+ *
+ * Le matching se fait sur le NOM du produit (clé) avec le grade éventuel.
+ * On teste la clé la plus longue d'abord pour éviter les faux positifs
+ * (ex. "Mobil 1 Racing 4T" doit matcher avant "Mobil 1").
+ */
+const OIL_IMAGES = [
+  // Camions / poids lourds
+  { match: /^Delvac XHP ESP/i,         src: "oils/delvac-xhp-esp-10w40.png" },
+  { match: /^Delvac Moderne/i,         src: "oils/delvac-moderne-15w40.png" },
+  { match: /^(Mobil )?Delvac 1\b/i,    src: "oils/delvac-1-5w40.png" },
+
+  // Motos
+  { match: /^Mobil 1 Racing 4T/i,      src: "oils/mobil-1-racing-4t.png" },
+  { match: /^Mobil 1 Racing 2T/i,      src: "oils/mobil-1-racing-2t.png" },
+  { match: /^Mobil Extra 2T/i,         src: "oils/mobil-extra-2t.png" },
+  { match: /^Mobil Super Moto 4T/i,    src: "oils/mobil-super-moto-4t.png" },
+
+  // Voitures
+  { match: /^Mobil 1 ESP/i,            src: "oils/mobil-1-esp-5w30.png" },
+
+  // Transmission / boîte auto
+  { match: /^Mobil ATF/i,              src: "oils/mobil-atf-220.png" },
+
+  // Mobil Super FF — on distingue 10W-40 et 15W-40 selon le grade indiqué
+  // (matché plus bas par la fonction qui regarde aussi rec.grade)
+];
+
+/* Renvoie le chemin de l'image pour un produit donné (et son grade éventuel). */
+function getOilImage(productName, grade) {
+  if (!productName) return null;
+  const name = productName.trim();
+
+  // Cas spécifique Mobil Super FF : on choisit le visuel selon le grade
+  if (/^Mobil Super FF/i.test(name)) {
+    if (grade && /15W-?40/i.test(grade)) return "oils/mobil-super-ff-15w40.png";
+    return "oils/mobil-super-ff-10w40.png";
+  }
+
+  for (const entry of OIL_IMAGES) {
+    if (entry.match.test(name)) return entry.src;
+  }
+  return null;
+}
+
+/* ---------- Moteur de recommandation huile ----------
+ * Basé sur le catalogue Mobil — Formation Station-Service 2026.
+ */
+function recommendOil(info) {
+  const code = (info.energie || "").toUpperCase();
+  const genreCode = (info.raw && info.raw.genre_code) || "";
+  const genre = (info.genreLabel || "").toLowerCase();
+
+  const isDiesel = /^(GO|GH)$/.test(code) || /diesel|gasoil|gazole|hdi|tdi|dci|cdi|crdi|d-4d|d4d/i.test((info.modele || ""));
+  const isElectric = code === "EL";
+  const isHybrid = /^(EH|EE|GH)$/.test(code);
+  const year = info.annee || 0;
+  const currentYear = new Date().getFullYear();
+  const ageVehicule = year ? (currentYear - year) : null;
+
+  const isMoto = /^(MTL|MTT|CL)$/.test(genreCode) || /motocyclette|cyclomoteur/i.test(genre);
+  const isCamion = /^(CAM|TRA)$/.test(genreCode) || /camion|tracteur/i.test(genre);
+
+  /* === Cas 1 : Électrique pur === */
+  if (isElectric && !isHybrid) {
+    return {
+      product: "Pas d'huile moteur",
+      grade: "—",
+      type: "Véhicule électrique",
+      vidange: "Selon préconisation constructeur",
+      reason: "Véhicule 100 % électrique : pas de moteur thermique à lubrifier.",
+      alternatives: ["Liquide de refroidissement spécifique", "Mobil ATF 220 (boîte auto si applicable)"],
+      specs: "—",
+      explain: "Les véhicules entièrement électriques n'ont pas de moteur à combustion. Seuls les fluides de refroidissement et, parfois, une huile de réducteur sont à entretenir selon les préconisations du constructeur."
+    };
+  }
+
+  /* === Cas 2 : Moto === */
+  if (isMoto) {
+    return {
+      product: "Mobil Super Moto 4T",
+      grade: "10W-40",
+      type: "Synthétique 4 temps",
+      vidange: "5 000–8 000 km (selon constructeur)",
+      reason: "Huile synthétique haute performance pour moteur moto 4T, propreté moteur et protection à haute température sous climat chaud.",
+      alternatives: ["Mobil 1 Racing 4T 15W-50 (conduite sportive)", "Mobil 1 Racing 2T / Mobil Extra 2T (pour 2 temps)"],
+      specs: "JASO MA/MA2 — API SM/SN",
+      explain: "Le Mobil Super Moto 4T 10W-40 est l'huile recommandée pour la majorité des motos 4 temps. Pour une conduite sportive ou un usage circuit, basculer sur Mobil 1 Racing 4T 15W-50 (JASO MA/MA2, API SN). Pour les 2 temps, voir gamme Mobil Extra 2T / Racing 2T (JASO FC/FD)."
+    };
+  }
+
+  /* === Cas 3 : Camion / Tracteur / BTP === */
+  if (isCamion) {
+    if (year >= 2015) {
+      return {
+        product: "Delvac XHP ESP",
+        grade: "10W-40",
+        type: "Semi-synthétique",
+        vidange: "Selon préconisation constructeur",
+        reason: "Diesel industriel moderne Euro V/VI avec DPF/SCR/CRT/DOC. Adapté aux conditions de service sévères (transports, travaux publics, carrières).",
+        alternatives: ["Delvac 1 5W-40 (synthétique haut de gamme)", "Delvac Moderne 15W-40 (entrée de gamme moderne)"],
+        specs: "ACEA E4/E7/E11 — API CJ/CK4 — GLOBAL DHD-1 — JASO DH-2",
+        explain: "Le Delvac XHP ESP 10W-40 est conçu pour les moteurs diesel industriels modernes à faibles émissions équipés de filtres à particules, réducteurs catalytiques et systèmes de régénération. Approuvé CAT ECF3, Cummins, MAN, Volvo VDS-4.5, Renault RLD3, Mack EOS-4.5, Iveco, Scania, DAF."
+      };
+    }
+    return {
+      product: "Delvac Moderne",
+      grade: "15W-40",
+      type: "Semi-synthétique",
+      vidange: "Selon préconisation constructeur",
+      reason: "Diesel haute performance pour moteurs diesel modernes et plus anciens, compatible carburants à haute ou basse teneur en soufre.",
+      alternatives: ["Delvac 1 5W-40 (synthétique, conditions sévères)", "Delvac XHP ESP 10W-40 (Euro V/VI)"],
+      specs: "ACEA B2/E3/E7 — API CG4/CH4/SL",
+      explain: "Le Delvac Moderne 15W-40 satisfait les exigences de la plupart des constructeurs américains et européens. Compatible CAT ECF2, Cummins, MAN, Volvo VDS-2, Renault RLD2, Mack EO-N, MTU, DAF."
+    };
+  }
+
+  /* === Cas 4 : Voiture particulière / utilitaire léger === */
+
+  if ((isDiesel && year >= 2010) || (isHybrid && year >= 2010)) {
+    return {
+      product: "Mobil 1 ESP",
+      grade: "5W-30",
+      type: "100 % synthétique",
+      vidange: "Jusqu'à 15 000 km (utilisation très lourde)",
+      reason: isDiesel
+        ? "Diesel moderne équipé de FAP/CAT : huile Low SAPS (ACEA C2/C3) indispensable pour préserver le filtre à particules."
+        : "Hybride / véhicule technologiquement avancé : protection optimisée même en conditions extrêmes, idéal pour les démarrages-arrêts répétés.",
+      alternatives: ["Mobil Super FF 10W-40 (si non équipé FAP)", "Vérifier préconisation constructeur"],
+      specs: "ACEA C2 et C3 — API SN/SP/SQ — MB 229.51/229.52 — VW 504/507 — BMW LL-04 — Porsche C30 — Fiat 9.55535-S3",
+      explain: "Le Mobil 1 ESP 5W-30 est un lubrifiant entièrement synthétique de 1er choix pour les véhicules équipés de systèmes de dépollution de dernière génération (FAP et CAT). Résistance exceptionnelle à l'oxydation, protection optimisée même dans des conditions extrêmes, et compatible avec intervalles de vidange prolongés (jusqu'à 15 000 km)."
+    };
+  }
+
+  if (ageVehicule !== null && ageVehicule <= 15 && year >= 2005) {
+    return {
+      product: "Mobil Super FF",
+      grade: "10W-40",
+      type: "Semi-synthétique",
+      vidange: "Jusqu'à 12 000 km (utilisation lourde)",
+      reason: "Véhicule moderne et exigeant : huile semi-synthétique formulée pour conserver les performances initiales du moteur et prolonger sa durée de vie.",
+      alternatives: ["Mobil 1 ESP 5W-30 (si équipé FAP/CAT)", "Mobil Super FF 15W-40 (utilisation moins intensive)"],
+      specs: "ACEA A3/B3 — API SM/SN/SN Plus/CF — VW 501/505.00 — MB 229.1",
+      explain: "Le Mobil Super FF 10W-40 est formulé pour conserver les performances initiales du moteur : la protection des pièces contre la corrosion et l'usure est assurée dans des conditions d'utilisation normales. Ses propriétés anti-usure prolongent la durée de vie du moteur. Vidange maximum recommandée : 12 000 km."
+    };
+  }
+
+  return {
+    product: "Mobil Super FF",
+    grade: "15W-40",
+    type: "Semi-synthétique",
+    vidange: "Jusqu'à 6 000 km (utilisation normale)",
+    reason: "Véhicule d'occasion ou plus ancien : viscosité adaptée à un moteur d'usure, bonne tenue thermique sous climat calédonien.",
+    alternatives: ["Mobil Super FF 10W-40 (si état moteur très bon)", "Vérifier préconisation constructeur"],
+    specs: "ACEA A3/B3 — API SN Plus/SP/SQ — VW 501/505 — MB 229.1",
+    explain: "Le Mobil Super FF 15W-40 est formulé pour optimiser la protection contre l'usure du moteur et prolonger sa durée de vie dans des conditions d'utilisation normales et sévères. Idéal pour véhicules d'occasion ou reconditionnés. Vidange maximum recommandée : 6 000 km."
+  };
+}
+
+/* ---------- Rendu ---------- */
+function renderVehicle(info) {
+  /* === Résumé : Marque / Modèle / Plaque === */
+  const summary = $("vehicleSummary");
+  summary.innerHTML = "";
+  const summaryFields = [
+    { k: "Marque",  v: info.marque || "—", cls: "" },
+    { k: "Modèle",  v: info.modele || "—", cls: "" },
+    { k: "Plaque",  v: info.plaque || "—", cls: "plate-display" },
+  ];
+  for (const f of summaryFields) {
+    const div = document.createElement("div");
+    div.className = "kv " + f.cls;
+    div.innerHTML = `<div class="k">${f.k}</div><div class="v">${String(f.v)}</div>`;
+    summary.appendChild(div);
+  }
+
+  /* === Détails optionnels (menu déroulant) === */
+  const grid = $("vehicleGrid");
+  grid.innerHTML = "";
+  const puissance = [];
+  if (info.puissanceCV) puissance.push(info.puissanceCV + " CV");
+  if (info.puissanceKW) puissance.push(info.puissanceKW + " kW");
+  const fields = [
+    ["Année", info.annee],
+    ["Énergie", info.energieLabel],
+    ["Cylindrée", info.cylindree ? info.cylindree + " cm³" : null],
+    ["Puissance fiscale", puissance.length ? puissance.join(" / ") : null],
+    ["Genre", info.genreLabel],
+    ["Places", info.places],
+    ["Couleur", info.couleur],
+    ["Poids à vide", info.poidsVide ? info.poidsVide + " kg" : null],
+    ["Commune", info.commune],
+  ];
+  for (const [k, v] of fields) {
+    if (v === null || v === undefined || v === "") continue;
+    const div = document.createElement("div");
+    div.className = "kv";
+    div.innerHTML = `<div class="k">${k}</div><div class="v">${String(v)}</div>`;
+    grid.appendChild(div);
+  }
+}
+
+function renderOil(rec) {
+  $("oilProduct").textContent = rec.product;
+  $("oilGrade").textContent = rec.grade;
+  $("oilType").textContent = rec.type;
+  $("oilType").style.display = rec.type && rec.type !== "—" ? "inline-block" : "none";
+  $("oilReason").textContent = rec.reason;
+  $("oilVidange").textContent = rec.vidange || "—";
+  $("oilSpecs").textContent = rec.specs || "—";
+  $("oilExplain").textContent = rec.explain;
+
+  /* === Photo officielle du produit principal === */
+  const oilVisual = $("oilVisual");
+  // On reset toujours au markup par défaut (bouteille CSS + label)
+  oilVisual.classList.remove("has-photo");
+  oilVisual.innerHTML = `
+    <div class="oil-bottle" aria-hidden="true"></div>
+    <div class="oil-visual-label">Lubrifiant<br/>Mobil</div>`;
+  const imgUrl = getOilImage(rec.product, rec.grade);
+  if (imgUrl) {
+    const img = document.createElement("img");
+    img.className = "oil-photo";
+    img.src = imgUrl;
+    img.alt = rec.product + " " + (rec.grade || "");
+    img.loading = "lazy";
+    // Si le chargement échoue (URL changée chez Mobil), on retombe sur le visuel CSS
+    img.onerror = () => { oilVisual.classList.remove("has-photo"); img.remove(); };
+    img.onload = () => { oilVisual.classList.add("has-photo"); };
+    oilVisual.appendChild(img);
+  }
+
+  /* === Alternatives en grandes cartes visuelles avec photo === */
+  const alts = $("oilAlts");
+  alts.innerHTML = "";
+  const altsSection = document.querySelector(".alternatives-section");
+  if (rec.alternatives && rec.alternatives.length) {
+    altsSection.style.display = "";
+    for (const a of rec.alternatives) {
+      const card = document.createElement("div");
+      card.className = "alt-card";
+      // Pour les alternatives, le grade est dans la chaîne elle-même
+      // (ex. "Mobil 1 ESP 5W-30 (si équipé FAP/CAT)") — on l'extrait par regex
+      const gradeMatch = a.match(/\d{1,2}W-?\d{1,2}/i);
+      const altGrade = gradeMatch ? gradeMatch[0] : null;
+      const altImgUrl = getOilImage(a, altGrade);
+      const visualInner = altImgUrl
+        ? `<img class="alt-photo" src="${altImgUrl}" alt="${a}" loading="lazy"
+              onload="this.parentElement.classList.add('has-photo')"
+              onerror="this.parentElement.classList.remove('has-photo');this.remove()"/>
+           <div class="alt-card-bottle" aria-hidden="true"></div>`
+        : `<div class="alt-card-bottle" aria-hidden="true"></div>`;
+      card.innerHTML = `
+        <div class="alt-card-visual">
+          ${visualInner}
+        </div>
+        <div class="alt-card-info">
+          <div class="alt-card-label">Alternative</div>
+          <div class="alt-card-name">${a}</div>
+        </div>`;
+      alts.appendChild(card);
+    }
+  } else {
+    altsSection.style.display = "none";
+  }
+}
+
+/* ---------- Soumission formulaire ---------- */
+$("plateForm").addEventListener("submit", async (e) => {
+  e.preventDefault();
+  hideResults();
+  clearStatus();
+  const raw = $("plate").value;
+  const plate = normalizePlate(raw);
+  if (plate.length < 3) {
+    setStatus("Plaque trop courte. Saisissez votre numéro d'immatriculation.", "error");
+    return;
+  }
+
+  $("submitBtn").disabled = true;
+  setStatus("Recherche du véhicule dans le registre NC…", "loading");
+
+  try {
+    const rec = await fetchVehicleByPlate(plate);
+    if (!rec) {
+      setStatus("Aucun véhicule trouvé pour la plaque <strong>" + plate + "</strong>. Vérifiez la saisie.", "error");
+      return;
+    }
+    const info = extractVehicleInfo(rec);
+    renderVehicle(info);
+    const oil = recommendOil(info);
+    renderOil(oil);
+    clearStatus();
+    showResults();
+    // Scroll doux vers les résultats
+    setTimeout(() => $("results").scrollIntoView({ behavior: "smooth", block: "start" }), 100);
+  } catch (err) {
+    setStatus("Erreur lors de la recherche : " + (err && err.message ? err.message : err), "error");
+  } finally {
+    $("submitBtn").disabled = false;
+  }
+});
+
+/* ---------- UX : majuscules en direct ---------- */
+$("plate").addEventListener("input", (e) => {
+  const pos = e.target.selectionStart;
+  e.target.value = e.target.value.toUpperCase();
+  try { e.target.setSelectionRange(pos, pos); } catch (_) {}
+});
+</script>
+</body>
+</html>
