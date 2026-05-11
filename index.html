@@ -85,18 +85,6 @@
     text-transform: uppercase;
     letter-spacing: 1.8px;
     margin-bottom: 14px;
-    position: relative;
-    padding-left: 26px;
-  }
-  .hero .eyebrow::before {
-    content: "";
-    position: absolute;
-    left: 0;
-    top: 50%;
-    transform: translateY(-50%);
-    width: 18px;
-    height: 2px;
-    background: var(--mobil-red);
   }
   .hero h1 {
     margin: 0 0 12px;
@@ -116,8 +104,7 @@
   }
   @media (min-width: 768px) {
     .hero { padding: 64px 20px 40px; }
-    .hero .eyebrow { font-size: 11px; letter-spacing: 2.5px; padding-left: 32px; margin-bottom: 18px; }
-    .hero .eyebrow::before { width: 24px; }
+    .hero .eyebrow { font-size: 11px; letter-spacing: 2.5px; margin-bottom: 18px; }
     .hero h1 { font-size: clamp(36px, 5vw, 56px); margin-bottom: 16px; }
     .hero p { font-size: 17px; line-height: 1.55; }
   }
@@ -259,6 +246,32 @@
 
   /* ===== Fiche véhicule (simplifiée) ===== */
   .vehicle-section { margin-top: 8px; }
+
+  /* ===== Photo officielle du véhicule (Imagin.studio) ===== */
+  .vehicle-photo-wrap {
+    display: none;               /* masqué tant qu'on n'a pas confirmé l'image */
+    width: 100%;
+    background: linear-gradient(180deg, #F5F5F7 0%, #FFFFFF 100%);
+    border: 1px solid var(--line);
+    border-radius: 12px;
+    padding: 12px;
+    margin-bottom: 12px;
+    text-align: center;
+    overflow: hidden;
+  }
+  .vehicle-photo-wrap.show { display: block; }
+  .vehicle-photo-wrap img {
+    max-width: 100%;
+    height: auto;
+    max-height: 180px;
+    object-fit: contain;
+    display: inline-block;
+    filter: drop-shadow(0 6px 14px rgba(0,0,0,0.12));
+  }
+  @media (min-width: 768px) {
+    .vehicle-photo-wrap { padding: 18px; margin-bottom: 16px; }
+    .vehicle-photo-wrap img { max-height: 220px; }
+  }
 
   /* Bandeau principal : Marque / Modèle / Plaque */
   .vehicle-summary {
@@ -827,7 +840,7 @@
 
 <!-- ===== Hero ===== -->
 <section class="hero">
-  <span class="eyebrow">Service station Mobil — Nouvelle-Calédonie</span>
+  <span class="eyebrow">Mobil Nouvelle-Calédonie</span>
   <h1>Le bon <span class="accent">lubrifiant</span><br/>pour votre véhicule.</h1>
   <p>Entrez votre plaque d'immatriculation. Nous identifions votre véhicule dans le registre officiel et recommandons le produit Mobil adapté à votre moteur.</p>
 </section>
@@ -856,6 +869,7 @@
 
       <div class="vehicle-section">
         <h3 class="section-title">Votre véhicule</h3>
+        <div id="vehiclePhoto" class="vehicle-photo-wrap" aria-hidden="true"></div>
         <div id="vehicleSummary" class="vehicle-summary"></div>
         <details class="vehicle-details">
           <summary>Voir tous les détails</summary>
@@ -874,7 +888,7 @@
               <div class="oil-visual-label">Lubrifiant<br/>Mobil</div>
             </div>
             <div class="oil-info">
-              <div class="oil-eyebrow">Produit recommandé</div>
+              <div class="oil-eyebrow">Lubrifiant recommandé</div>
               <div class="oil-product" id="oilProduct">—</div>
               <div class="oil-grade" id="oilGrade">—</div>
               <div class="oil-type" id="oilType"></div>
@@ -903,7 +917,7 @@
 
       <div class="alternatives-section">
         <h3 class="section-title">Alternatives disponibles</h3>
-        <p class="alternatives-intro">En cas de rupture de stock du produit principal, ces lubrifiants Mobil peuvent être proposés au client.</p>
+        <p class="alternatives-intro">À utiliser seulement en solution de secours, en gardant éventuellement un intervalle de vidange plus court.</p>
         <div id="oilAlts" class="alt-grid"></div>
       </div>
 
@@ -1234,8 +1248,77 @@ function recommendOil(info) {
   };
 }
 
+/* ---------- Photo officielle du véhicule via Imagin.studio ----------
+ * On construit une URL à partir de marque + modèle + année. Imagin gère
+ * le rendu en fond transparent. Si le modèle n'est pas connu d'Imagin,
+ * l'image renvoyée est une silhouette générique ("no image available") —
+ * on la masque alors silencieusement.
+ *
+ * Doc : https://www.imagin.studio/customer/library/static
+ */
+function buildVehicleImageUrl(info) {
+  if (!info || !info.marque) return null;
+  // Extraction du "modelFamily" : on prend les 1er/2e mots du modèle,
+  // car Imagin n'aime pas les motorisations détaillées (ex. "208 1.2 PURETECH"
+  // -> on garde juste "208"). On nettoie aussi les caractères spéciaux.
+  let modelFamily = "";
+  if (info.modele) {
+    const cleaned = String(info.modele)
+      .toLowerCase()
+      .replace(/[^a-z0-9 ]/g, " ")
+      .trim()
+      .split(/\s+/);
+    // On prend juste le 1er mot, le plus souvent c'est le nom du modèle
+    modelFamily = cleaned[0] || "";
+  }
+  const params = new URLSearchParams({
+    customer: "img",
+    make: String(info.marque).toLowerCase(),
+    modelFamily: modelFamily,
+    angle: "23",                    // angle 3/4 avant gauche, standard
+    zoomType: "fullscreen",
+    paintDescription: "",           // couleur par défaut
+    safeMode: "true",               // évite les rendus trop expérimentaux
+  });
+  if (info.annee) params.set("modelYear", String(info.annee));
+  return "https://cdn.imagin.studio/getimage?" + params.toString();
+}
+
+function renderVehiclePhoto(info) {
+  const wrap = $("vehiclePhoto");
+  if (!wrap) return;
+  wrap.classList.remove("show");
+  wrap.innerHTML = "";
+
+  // On ne tente la photo que pour les vrais véhicules motorisés / voitures
+  // (pas pour les remorques, etc.) -- on garde simple : juste besoin marque + modèle.
+  if (!info || !info.marque || !info.modele) return;
+  const url = buildVehicleImageUrl(info);
+  if (!url) return;
+
+  const img = new Image();
+  img.alt = (info.marque || "") + " " + (info.modele || "");
+  img.loading = "lazy";
+  img.onload = () => {
+    // Imagin renvoie parfois une silhouette générique très petite (~200px)
+    // quand il n'a pas le modèle. On filtre en exigeant une image au-dessus
+    // d'une taille plausible (la "no image" d'Imagin est typiquement < 400px).
+    if (img.naturalWidth >= 400) {
+      wrap.appendChild(img);
+      wrap.classList.add("show");
+    }
+  };
+  img.onerror = () => {
+    // Silencieux : la zone reste cachée si l'image ne charge pas.
+  };
+  img.src = url;
+}
+
 /* ---------- Rendu ---------- */
 function renderVehicle(info) {
+  /* === Photo du véhicule (silencieusement masquée si indisponible) === */
+  renderVehiclePhoto(info);
+
   /* === Résumé : Marque / Modèle / Plaque === */
   const summary = $("vehicleSummary");
   summary.innerHTML = "";
@@ -1316,8 +1399,6 @@ function renderOil(rec) {
     for (const a of rec.alternatives) {
       const card = document.createElement("div");
       card.className = "alt-card";
-      // Pour les alternatives, le grade est dans la chaîne elle-même
-      // (ex. "Mobil 1 ESP 5W-30 (si équipé FAP/CAT)") — on l'extrait par regex
       const gradeMatch = a.match(/\d{1,2}W-?\d{1,2}/i);
       const altGrade = gradeMatch ? gradeMatch[0] : null;
       const altImgUrl = getOilImage(a, altGrade);
