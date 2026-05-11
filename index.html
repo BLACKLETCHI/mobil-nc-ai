@@ -1083,8 +1083,45 @@ function getOilImage(productName, grade) {
   return null;
 }
 
-/* ---------- Moteur de recommandation huile ----------
+/* ---------- V2 : Appel à l'API IA (/api/recommend) ----------
+ * Envoie les infos véhicule à notre endpoint serverless qui :
+ *   1. interroge Claude pour récupérer la préconisation constructeur,
+ *   2. valide la sortie via une table déterministe (garde-fou),
+ *   3. retombe sur "contactez-nous" si la moindre incohérence est détectée.
+ * Timeout 14s (Vercel autorise jusqu'à 15s sur le plan Hobby).
+ */
+async function recommendOilAI(info) {
+  const payload = {
+    marque:       info.marque,
+    modele:       info.modele,
+    annee:        info.annee,
+    energie:      info.energie,
+    energieLabel: info.energieLabel,
+    cylindree:    info.cylindree,
+    genreCode:    (info.raw && info.raw.genre_code) || info.genre || "",
+    genreLabel:   info.genreLabel,
+  };
+  const ctrl = new AbortController();
+  const timer = setTimeout(() => ctrl.abort(), 14000);
+  try {
+    const r = await fetch("/api/recommend", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(payload),
+      signal: ctrl.signal,
+    });
+    if (!r.ok) throw new Error("API HTTP " + r.status);
+    return await r.json();
+  } finally {
+    clearTimeout(timer);
+  }
+}
+
+/* ---------- Moteur de recommandation huile (FALLBACK LOCAL) ----------
  * Basé sur le catalogue Mobil — Formation Station-Service 2026.
+ * Utilisé UNIQUEMENT si /api/recommend est indisponible (réseau, panne).
+ * NOTE : cette logique contient les bugs identifiés (camionnette essence
+ * → Delvac, etc.) — à corriger ou à remplacer entièrement par l'API.
  */
 function recommendOil(info) {
   const code = (info.energie || "").toUpperCase();
@@ -1301,52 +1338,4 @@ function renderOil(rec) {
       alts.appendChild(card);
     }
   } else {
-    altsSection.style.display = "none";
-  }
-}
-
-/* ---------- Soumission formulaire ---------- */
-$("plateForm").addEventListener("submit", async (e) => {
-  e.preventDefault();
-  hideResults();
-  clearStatus();
-  const raw = $("plate").value;
-  const plate = normalizePlate(raw);
-  if (plate.length < 3) {
-    setStatus("Plaque trop courte. Saisissez votre numéro d'immatriculation.", "error");
-    return;
-  }
-
-  $("submitBtn").disabled = true;
-  setStatus("Recherche du véhicule dans le registre NC…", "loading");
-
-  try {
-    const rec = await fetchVehicleByPlate(plate);
-    if (!rec) {
-      setStatus("Aucun véhicule trouvé pour la plaque <strong>" + plate + "</strong>. Vérifiez la saisie.", "error");
-      return;
-    }
-    const info = extractVehicleInfo(rec);
-    renderVehicle(info);
-    const oil = recommendOil(info);
-    renderOil(oil);
-    clearStatus();
-    showResults();
-    // Scroll doux vers les résultats
-    setTimeout(() => $("results").scrollIntoView({ behavior: "smooth", block: "start" }), 100);
-  } catch (err) {
-    setStatus("Erreur lors de la recherche : " + (err && err.message ? err.message : err), "error");
-  } finally {
-    $("submitBtn").disabled = false;
-  }
-});
-
-/* ---------- UX : majuscules en direct ---------- */
-$("plate").addEventListener("input", (e) => {
-  const pos = e.target.selectionStart;
-  e.target.value = e.target.value.toUpperCase();
-  try { e.target.setSelectionRange(pos, pos); } catch (_) {}
-});
-</script>
-</body>
-</html>
+    altsSection.style.display = "n

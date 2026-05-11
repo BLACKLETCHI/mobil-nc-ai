@@ -1,0 +1,13 @@
+{
+  "name": "mobil-nc-ai",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Configurateur Mobil NC V2 -- recommandation huile avec IA Claude + garde-fous deterministes",
+  "type": "module",
+  "engines": {
+    "node": ">=20"
+  },
+  "dependencies": {
+    "@anthropic-ai/sdk": "^0.30.0"
+  }
+}
