@@ -247,30 +247,36 @@
   /* ===== Fiche véhicule (simplifiée) ===== */
   .vehicle-section { margin-top: 8px; }
 
-  /* ===== Photo officielle du véhicule (Imagin.studio) ===== */
+  /* ===== Photo officielle du véhicule (Imagin.studio) =====
+   * En mode démo (customer=img), Imagin renvoie l'image avec un filigrane
+   * et un fond NOIR. On adapte donc le conteneur en sombre pour fusionner
+   * proprement. Quand on aura une clé customer dédiée (fond transparent),
+   * il suffira de passer le background sur "linear-gradient(180deg, #F5F5F7 0%, #FFF 100%)".
+   */
   .vehicle-photo-wrap {
     display: none;               /* masqué tant qu'on n'a pas confirmé l'image */
     width: 100%;
-    background: linear-gradient(180deg, #F5F5F7 0%, #FFFFFF 100%);
+    background: linear-gradient(180deg, #1A1A1A 0%, #000 100%);
     border: 1px solid var(--line);
     border-radius: 12px;
-    padding: 12px;
+    padding: 0;
     margin-bottom: 12px;
     text-align: center;
     overflow: hidden;
+    line-height: 0;              /* évite la marge sous l'image inline */
   }
   .vehicle-photo-wrap.show { display: block; }
   .vehicle-photo-wrap img {
-    max-width: 100%;
+    width: 100%;
     height: auto;
-    max-height: 180px;
+    max-height: 220px;
     object-fit: contain;
-    display: inline-block;
-    filter: drop-shadow(0 6px 14px rgba(0,0,0,0.12));
+    display: block;
+    margin: 0 auto;
   }
   @media (min-width: 768px) {
-    .vehicle-photo-wrap { padding: 18px; margin-bottom: 16px; }
-    .vehicle-photo-wrap img { max-height: 220px; }
+    .vehicle-photo-wrap { margin-bottom: 16px; }
+    .vehicle-photo-wrap img { max-height: 280px; }
   }
 
   /* Bandeau principal : Marque / Modèle / Plaque */
@@ -1275,10 +1281,7 @@ function buildVehicleImageUrl(info) {
     customer: "img",
     make: String(info.marque).toLowerCase(),
     modelFamily: modelFamily,
-    angle: "23",                    // angle 3/4 avant gauche, standard
-    zoomType: "fullscreen",
-    paintDescription: "",           // couleur par défaut
-    safeMode: "true",               // évite les rendus trop expérimentaux
+    angle: "23",                    // angle 3/4 avant gauche, standard auto
   });
   if (info.annee) params.set("modelYear", String(info.annee));
   return "https://cdn.imagin.studio/getimage?" + params.toString();
@@ -1300,16 +1303,20 @@ function renderVehiclePhoto(info) {
   img.alt = (info.marque || "") + " " + (info.modele || "");
   img.loading = "lazy";
   img.onload = () => {
-    // Imagin renvoie parfois une silhouette générique très petite (~200px)
-    // quand il n'a pas le modèle. On filtre en exigeant une image au-dessus
-    // d'une taille plausible (la "no image" d'Imagin est typiquement < 400px).
-    if (img.naturalWidth >= 400) {
+    // Imagin renvoie TOUJOURS une image (même un placeholder pour les modèles
+    // inconnus). En mode démo "customer=img", la silhouette générique fait
+    // typiquement < 200px de large. On garde donc un filtre minimal mais
+    // permissif pour ne pas exclure les vraies photos (qui font ~1200px).
+    if (img.naturalWidth >= 300) {
       wrap.appendChild(img);
       wrap.classList.add("show");
+      console.log("[photo] Vehicule charge :", img.naturalWidth + "x" + img.naturalHeight);
+    } else {
+      console.log("[photo] Image trop petite, probablement silhouette generique :", img.naturalWidth + "px");
     }
   };
-  img.onerror = () => {
-    // Silencieux : la zone reste cachée si l'image ne charge pas.
+  img.onerror = (e) => {
+    console.warn("[photo] Erreur chargement image Imagin :", e);
   };
   img.src = url;
 }
