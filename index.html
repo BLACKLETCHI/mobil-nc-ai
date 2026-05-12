@@ -1303,23 +1303,34 @@ function renderVehiclePhoto(info) {
   console.log("[photo] URL construite :", url);
   if (!url) { console.warn("[photo] ABORT : URL nulle"); return; }
 
-  const img = new Image();
+  // IMPORTANT : on insere l'image DANS LE DOM avant de definir src.
+  // Avec new Image() hors DOM, certains navigateurs (notamment en mode
+  // mobile emule) ne demarrent jamais la requete. Insertion = garantie
+  // que le navigateur charge l'image.
+  const img = document.createElement("img");
   img.alt = (info.marque || "") + " " + (info.modele || "");
   img.loading = "lazy";
-  img.onload = () => {
-    console.log("[photo] onload OK :", img.naturalWidth + "x" + img.naturalHeight);
-    // Filtre permissif : on affiche dès que l'image fait au moins 200px
-    // (la silhouette "no data" d'Imagin fait ~100-150px en démo).
-    if (img.naturalWidth >= 200) {
-      wrap.appendChild(img);
-      wrap.classList.add("show");
-    } else {
-      console.log("[photo] Image trop petite, ignoree");
+
+  // On affiche le conteneur immediatement (avec une mini hauteur reservee
+  // pour eviter le saut de layout). Si l'image echoue, on le re-cache.
+  wrap.classList.add("show");
+  wrap.appendChild(img);
+
+  img.addEventListener("load", () => {
+    console.log("[photo] LOAD OK :", img.naturalWidth + "x" + img.naturalHeight);
+    if (img.naturalWidth < 200) {
+      // Silhouette generique d'Imagin -> on cache discretement
+      console.log("[photo] Image trop petite, on cache");
+      wrap.classList.remove("show");
+      wrap.innerHTML = "";
     }
-  };
-  img.onerror = (e) => {
-    console.warn("[photo] onerror declenche pour URL :", url);
-  };
+  });
+  img.addEventListener("error", () => {
+    console.warn("[photo] ERROR de chargement, on cache le conteneur");
+    wrap.classList.remove("show");
+    wrap.innerHTML = "";
+  });
+
   img.src = url;
 }
 
