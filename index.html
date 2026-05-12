@@ -1284,6 +1284,7 @@ function buildVehicleImageUrl(info) {
     make: String(info.marque).toLowerCase(),
     modelFamily: modelFamily,
     angle: "23",                    // angle 3/4 avant gauche, standard auto
+    v: "2",                         // bust cache navigateur des anciennes versions
   });
   if (info.annee) params.set("modelYear", String(info.annee));
   return "/api/vehicle-image?" + params.toString();
