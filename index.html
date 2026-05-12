@@ -252,6 +252,12 @@
    * et un fond NOIR. On adapte donc le conteneur en sombre pour fusionner
    * proprement. Quand on aura une clé customer dédiée (fond transparent),
    * il suffira de passer le background sur "linear-gradient(180deg, #F5F5F7 0%, #FFF 100%)".
+   *
+   * !! TEMPORAIREMENT MASQUE EN PROD !!
+   * On garde tout le code en place (proxy + JS), mais on cache visuellement
+   * le conteneur tant qu'on n'a pas la clé customer Imagin (qui retire le
+   * filigrane). Pour réactiver : retirer la règle ".vehicle-photo-wrap { display: none !important; }"
+   * ci-dessous (ligne marquée TEMP-HIDE).
    */
   .vehicle-photo-wrap {
     display: none;               /* masqué tant qu'on n'a pas confirmé l'image */
@@ -266,6 +272,9 @@
     line-height: 0;              /* évite la marge sous l'image inline */
   }
   .vehicle-photo-wrap.show { display: block; }
+  /* TEMP-HIDE : masquage en attendant la clé customer Imagin (sans filigrane).
+     Supprimer cette règle pour réafficher les photos véhicule. */
+  .vehicle-photo-wrap, .vehicle-photo-wrap.show { display: none !important; }
   .vehicle-photo-wrap img {
     width: 100%;
     height: auto;
