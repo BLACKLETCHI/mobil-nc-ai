@@ -1277,14 +1277,16 @@ function buildVehicleImageUrl(info) {
     // On prend juste le 1er mot, le plus souvent c'est le nom du modèle
     modelFamily = cleaned[0] || "";
   }
+  // On passe par notre proxy /api/vehicle-image plutôt que d'appeler
+  // cdn.imagin.studio directement, pour contourner les bloqueurs de pub.
+  // Le serveur Vercel forward la requête à Imagin et nous renvoie l'image.
   const params = new URLSearchParams({
-    customer: "img",
     make: String(info.marque).toLowerCase(),
     modelFamily: modelFamily,
     angle: "23",                    // angle 3/4 avant gauche, standard auto
   });
   if (info.annee) params.set("modelYear", String(info.annee));
-  return "https://cdn.imagin.studio/getimage?" + params.toString();
+  return "/api/vehicle-image?" + params.toString();
 }
 
 function renderVehiclePhoto(info) {
